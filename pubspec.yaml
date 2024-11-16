@@ -1,5 +1,5 @@
-name: flutter_application_del
-description: "A new Flutter project."
+name: fabric
+description: "知织"
 
 # Prevent accidental publishing to pub.dev.
 publish_to: 'none'
@@ -14,6 +14,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  get_storage: ^2.1.1
+  flutter_svg: ^2.0.14
 
 dev_dependencies:
   flutter_test:
@@ -30,3 +32,4 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/images/
+    - assets/images/svg/
