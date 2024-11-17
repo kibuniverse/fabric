@@ -2,6 +2,7 @@ import "package:fabric/src/libs/storage/counter.dart";
 import 'package:flutter/material.dart';
 import "package:flutter_svg/flutter_svg.dart";
 import "package:get_storage/get_storage.dart";
+import "package:haptic_feedback/haptic_feedback.dart";
 
 class Counter extends StatefulWidget {
   const Counter({super.key});
@@ -16,11 +17,27 @@ class _CounterState extends State<Counter> {
   /// 是否开启屏幕常亮
   bool enableKeepScreen = true;
 
+  bool _canVibrate = false;
+
   final box = GetStorage();
   SnackBar? snackBar;
+
+  _checkVibrationCapability() async {
+    final canVibrate = await Haptics.canVibrate();
+    if (canVibrate == false) {
+      // 设备不支持震动反馈
+      // 上报到 sentry
+      return;
+    }
+    setState(() {
+      _canVibrate = canVibrate;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _checkVibrationCapability();
     final counterStorage = CounterStorage().loadCounterModel();
     enableVibration = counterStorage.enableVibration;
     enableKeepScreen = counterStorage.enableKeepScreenOn;
@@ -44,10 +61,16 @@ class _CounterState extends State<Counter> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar!);
   }
 
-  void _handleVibrationTap(bool v, BuildContext context) {
+  void _handleVibrationTap(bool v, BuildContext context) async {
     // 创建SnackBar
     final snackText = v ? '震动反馈已开启' : "震动反馈已关闭";
     showSnackBar(snackText);
+
+    // 震动反馈
+    // 默认使用 HapticsType.soft 震动
+    if (v == true) {
+      _performVibration(HapticsType.soft);
+    }
     // 显示SnackBar
     CounterStorage().updateVibration(v);
     setState(() {
@@ -55,7 +78,7 @@ class _CounterState extends State<Counter> {
     });
   }
 
-  void _handleKeepScreenTap(bool v, BuildContext context) {
+  void _handleKeepScreenTap(bool v, BuildContext context) async {
     // 创建SnackBar
     final snackText = v ? '屏幕长亮已开启' : "屏幕长亮已关闭";
     showSnackBar(snackText);
@@ -64,6 +87,13 @@ class _CounterState extends State<Counter> {
     setState(() {
       enableKeepScreen = v;
     });
+  }
+
+  void _performVibration(HapticsType type) {
+    if (!_canVibrate) {
+      return;
+    }
+    Haptics.vibrate(type);
   }
 
   @override
@@ -78,7 +108,8 @@ class _CounterState extends State<Counter> {
               child: Text(
                 "行计数器",
                 style: TextStyle(
-                    color: Colors.black,
+                    // 设置 color 为 #333333
+                    color: Color(0xFF333333),
                     fontWeight: FontWeight.bold,
                     fontSize: 26),
               ),
