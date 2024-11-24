@@ -11,12 +11,26 @@ class CounterStorage {
   CounterModel loadCounterModel() {
     final String? json =
         _box.read(CounterStorageKeys.globalConfigNew.toString());
+
     if (json != null) {
       final Map<String, dynamic> map = jsonDecode(json);
-      return CounterModel.fromJson(map);
+      final r = CounterModel.fromJson(map);
+      if (r.counterKeys.isEmpty) {
+        r.counterKeys.add("counter_1");
+      }
+      return r;
     }
+
     return CounterModel(
-        enableVibration: true, enableKeepScreenOn: true, counterKeys: []);
+        enableVibration: true,
+        enableKeepScreenOn: true,
+        counterKeys: ["counter_1"]);
+  }
+
+  /// 获取当前计数器数量
+  int getCurrentCounterNumber() {
+    final model = loadCounterModel();
+    return model.counterKeys.length;
   }
 
   setGlobalConfig(String config) =>
@@ -33,6 +47,14 @@ class CounterStorage {
   updateKeepScreen(bool enable) {
     final model = loadCounterModel();
     model.enableKeepScreenOn = enable;
+    saveCounterModel(model);
+  }
+
+  /// 新增一个计数器
+  addCounterItemModel() {
+    final number = getCurrentCounterNumber();
+    final model = loadCounterModel();
+    model.counterKeys.add("counter_$number");
     saveCounterModel(model);
   }
 

@@ -17,6 +17,8 @@ dependencies:
   get_storage: ^2.1.1
   flutter_svg: ^2.0.14
   haptic_feedback: ^0.5.1+1
+  wakelock_plus: ^1.2.8
+  animated_digit: ^3.2.3
 
 dev_dependencies:
   flutter_test:

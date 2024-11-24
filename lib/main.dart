@@ -1,4 +1,4 @@
-import "package:fabric/src/pages/counter/counter.dart";
+import "package:fabric/pages/counter/counter.dart";
 import 'package:flutter/material.dart';
 import "package:get_storage/get_storage.dart";
 

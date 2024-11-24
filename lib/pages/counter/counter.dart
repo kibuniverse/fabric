@@ -1,8 +1,12 @@
-import "package:fabric/src/libs/storage/counter.dart";
+import "package:fabric/model/counter.dart";
+import "package:fabric/utils/storage/counter.dart";
+import "package:fabric/utils/storage/counter_item.dart";
+import "package:fabric/widgets/counter_item.dart";
 import 'package:flutter/material.dart';
 import "package:flutter_svg/flutter_svg.dart";
 import "package:get_storage/get_storage.dart";
 import "package:haptic_feedback/haptic_feedback.dart";
+import "package:wakelock_plus/wakelock_plus.dart";
 
 class Counter extends StatefulWidget {
   const Counter({super.key});
@@ -18,6 +22,8 @@ class _CounterState extends State<Counter> {
   bool enableKeepScreen = true;
 
   bool _canVibrate = false;
+
+  List<CounterItem> counterItems = [];
 
   final box = GetStorage();
   SnackBar? snackBar;
@@ -41,6 +47,11 @@ class _CounterState extends State<Counter> {
     final counterStorage = CounterStorage().loadCounterModel();
     enableVibration = counterStorage.enableVibration;
     enableKeepScreen = counterStorage.enableKeepScreenOn;
+    final counterKeys = counterStorage.counterKeys;
+
+    counterItems = counterKeys.map((key) {
+      return CounterItemStorage().loadCounterItemModel(key);
+    }).toList();
   }
 
   showSnackBar(String text) {
@@ -81,6 +92,11 @@ class _CounterState extends State<Counter> {
   void _handleKeepScreenTap(bool v, BuildContext context) async {
     // 创建SnackBar
     final snackText = v ? '屏幕长亮已开启' : "屏幕长亮已关闭";
+    if (v) {
+      WakelockPlus.enable();
+    } else {
+      WakelockPlus.disable();
+    }
     showSnackBar(snackText);
 
     CounterStorage().updateKeepScreen(v);
@@ -94,6 +110,33 @@ class _CounterState extends State<Counter> {
       return;
     }
     Haptics.vibrate(type);
+  }
+
+  void _counterItemClick(String key, Operation type) {
+    if (type == Operation.add) {
+      if (enableVibration) {
+        _performVibration(HapticsType.soft);
+      }
+      CounterItemStorage().addCounterItemModel(key);
+    }
+    if (type == Operation.minus) {
+      if (enableVibration) {
+        _performVibration(HapticsType.soft);
+      }
+      CounterItemStorage().minusCounterItemModel(key);
+    }
+    if (type == Operation.reset) {
+      CounterItemStorage().resetCounterItemModel(key);
+    }
+    final newCounterItems = counterItems.map((counterItem) {
+      if (counterItem.key == key) {
+        return CounterItemStorage().loadCounterItemModel(key);
+      }
+      return counterItem;
+    }).toList();
+    setState(() {
+      counterItems = newCounterItems;
+    });
   }
 
   @override
@@ -140,6 +183,39 @@ class _CounterState extends State<Counter> {
             )
           ]),
         ),
+        Expanded(
+            child: DefaultTabController(
+          length: counterItems.length,
+          child: Column(children: [
+            TabBar(
+              tabAlignment: TabAlignment.start,
+              isScrollable: true,
+              tabs: counterItems
+                  .map((counterItem) => Tab(
+                        child: Text(
+                          counterItem.name,
+                          style: const TextStyle(
+                              color: Color(0xFF333333),
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ))
+                  .toList(),
+            ),
+            Expanded(
+              child: TabBarView(
+                children: counterItems
+                    .map((counterItem) => CounterItemWidget(
+                          counterItem: counterItem,
+                          counterKey: counterItem.key,
+                          onTap: (Operation type) {
+                            _counterItemClick(counterItem.key, type);
+                          },
+                        ))
+                    .toList(),
+              ),
+            )
+          ]),
+        ))
       ],
     ));
   }
