@@ -1,8 +1,10 @@
-/** 计时器组件 */
-import 'package:animated_digit/animated_digit.dart';
+/// 计时器组件
+library;
+
+import 'dart:async';
+
 import 'package:fabric/utils/time.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 class TimerWidget extends StatefulWidget {
   final VoidCallback? onTick; // 每秒回调
@@ -10,8 +12,7 @@ class TimerWidget extends StatefulWidget {
   final int initCounter; // 初始计数器值
 
   const TimerWidget(
-      {Key? key, this.onTick, this.isActive = false, this.initCounter = 0})
-      : super(key: key);
+      {super.key, this.onTick, this.isActive = false, this.initCounter = 0});
 
   @override
   _TimerWidgetState createState() => _TimerWidgetState();
@@ -45,7 +46,7 @@ class _TimerWidgetState extends State<TimerWidget> {
   }
 
   void _startCounter() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted) {
         setState(() {
           _count++;
@@ -74,7 +75,7 @@ class _TimerWidgetState extends State<TimerWidget> {
     final text = "$hours:$minutes:$seconds";
     return Text(
       text,
-      style: TextStyle(fontSize: 18, color: Colors.black45),
+      style: const TextStyle(fontSize: 18, color: Colors.black45),
     );
   }
 }

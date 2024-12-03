@@ -1,4 +1,5 @@
 import "package:fabric/model/counter.dart";
+import "package:fabric/utils/snack_bar.dart";
 import "package:fabric/utils/storage/counter.dart";
 import "package:fabric/utils/storage/counter_item.dart";
 import "package:fabric/widgets/counter_item.dart";
@@ -26,7 +27,6 @@ class _CounterState extends State<Counter> {
   List<CounterItem> counterItems = [];
 
   final box = GetStorage();
-  SnackBar? snackBar;
 
   _checkVibrationCapability() async {
     final canVibrate = await Haptics.canVibrate();
@@ -54,28 +54,10 @@ class _CounterState extends State<Counter> {
     }).toList();
   }
 
-  showSnackBar(String text) {
-    if (snackBar != null) {
-      // 暂停上一个 snackBar 的显示
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    }
-    snackBar = SnackBar(
-      content: Text(
-        text,
-        style: TextStyle(color: Colors.purple[900]),
-      ),
-      behavior: SnackBarBehavior.fixed,
-      elevation: 0, // 设置阴影高度
-      backgroundColor: const Color(0xFFE6E6FA),
-      duration: Durations.extralong4,
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar!);
-  }
-
   void _handleVibrationTap(bool v, BuildContext context) async {
     // 创建SnackBar
     final snackText = v ? '震动反馈已开启' : "震动反馈已关闭";
-    showSnackBar(snackText);
+    GlobalSnackBar.show(context: context, message: snackText);
 
     // 震动反馈
     // 默认使用 HapticsType.soft 震动
@@ -97,7 +79,7 @@ class _CounterState extends State<Counter> {
     } else {
       WakelockPlus.disable();
     }
-    showSnackBar(snackText);
+    GlobalSnackBar.show(context: context, message: snackText);
 
     CounterStorage().updateKeepScreen(v);
     setState(() {
@@ -145,7 +127,8 @@ class _CounterState extends State<Counter> {
         child: Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(22.0),
+          padding:
+              const EdgeInsets.only(top: 22.0, left: 22, right: 22, bottom: 6),
           child: Row(children: [
             const Expanded(
               child: Text(
@@ -190,13 +173,16 @@ class _CounterState extends State<Counter> {
             TabBar(
               tabAlignment: TabAlignment.start,
               isScrollable: true,
+              // labelColor 为 #A889C8
+              labelColor: const Color(0xFFA889C8),
+              unselectedLabelColor: const Color(0xCC333333),
+              indicatorColor: const Color(0xFFA889C8),
+              indicatorPadding: const EdgeInsets.only(left: 10.0, right: 10),
               tabs: counterItems
                   .map((counterItem) => Tab(
                         child: Text(
                           counterItem.name,
-                          style: const TextStyle(
-                              color: Color(0xFF333333),
-                              fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ))
                   .toList(),

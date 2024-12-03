@@ -5,7 +5,7 @@ import 'package:fabric/model/counter.dart';
 import 'package:fabric/utils/storage/counter.dart';
 import 'package:get_storage/get_storage.dart';
 
-/** 单个计数器 */
+/// 单个计数器
 class CounterItemStorage {
   static final _box = GetStorage("counter");
 

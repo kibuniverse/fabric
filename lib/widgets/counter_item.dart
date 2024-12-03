@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:animated_digit/animated_digit.dart';
 import 'package:fabric/model/counter.dart';
+import 'package:fabric/utils/snack_bar.dart';
 import 'package:fabric/widgets/timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,12 +16,12 @@ class CounterItemWidget extends StatefulWidget {
   // 点击回调函数
   final CallbackFunction onTap;
 
-  CounterItemWidget({
-    Key? key,
+  const CounterItemWidget({
+    super.key,
     required this.counterItem,
     required this.counterKey,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   _CounterItemWidget createState() => _CounterItemWidget();
@@ -35,7 +36,36 @@ class _CounterItemWidget extends State<CounterItemWidget> {
   }
 
   void _onClickReset() {
-    _onClickInterception(Operation.reset);
+    // 如果当前数字不为0，则提示无需确认
+    if (widget.counterItem.currentCount == 0) {
+      GlobalSnackBar.show(context: context, message: "当前计数为0, 无需重置");
+      return;
+    }
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('重置计数器'),
+          content: const Text('确定要重置当前计数器吗？'),
+          actions: [
+            TextButton(
+              child: const Text('取消'),
+              onPressed: () {
+                Navigator.of(context).pop(); // 关闭弹窗
+              },
+            ),
+            TextButton(
+              child: const Text('确认'),
+              onPressed: () {
+                // 执行确认操作
+                Navigator.of(context).pop(true); // 关闭弹窗并返回true
+                _onClickInterception(Operation.reset);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _onClickAdd() {
@@ -109,7 +139,7 @@ class _CounterItemWidget extends State<CounterItemWidget> {
               ],
             ),
           ),
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
@@ -127,7 +157,7 @@ class _CounterItemWidget extends State<CounterItemWidget> {
             ],
           ),
           Padding(
-            padding: EdgeInsets.only(left: 8, right: 8),
+            padding: const EdgeInsets.only(left: 8, right: 8),
             child: Row(
               children: [
                 GestureDetector(
@@ -141,7 +171,7 @@ class _CounterItemWidget extends State<CounterItemWidget> {
                         borderRadius: BorderRadius.circular(10000),
                       ),
                       child: Padding(
-                        padding: EdgeInsets.all(26),
+                        padding: const EdgeInsets.all(26),
                         child: SvgPicture.asset(
                           "assets/images/svg/minus.svg",
                           semanticsLabel: "计数器减少",
@@ -154,7 +184,7 @@ class _CounterItemWidget extends State<CounterItemWidget> {
                     child: AnimatedDigitWidget(
                       loop: false,
                       value: widget.counterItem.currentCount,
-                      textStyle: TextStyle(
+                      textStyle: const TextStyle(
                           fontSize: 48,
                           // 设置颜色为 #E6E6FA
                           color: Colors.black,
@@ -169,11 +199,11 @@ class _CounterItemWidget extends State<CounterItemWidget> {
                       height: 100,
                       decoration: BoxDecoration(
                         // #E6E6FA
-                        color: Color(0xFFE6E6FA),
+                        color: const Color(0xFFE6E6FA),
                         borderRadius: BorderRadius.circular(1000),
                       ),
                       child: Padding(
-                        padding: EdgeInsets.all(26),
+                        padding: const EdgeInsets.all(26),
                         child: SvgPicture.asset(
                           "assets/images/svg/plus.svg",
                           semanticsLabel: "计数器增加",
@@ -184,13 +214,13 @@ class _CounterItemWidget extends State<CounterItemWidget> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 22),
+            padding: const EdgeInsets.only(top: 22),
             child: TimerWidget(
                 isActive: isRecordingTime,
                 initCounter: widget.counterItem.timing),
           ),
           Padding(
-              padding: EdgeInsets.only(top: 44),
+              padding: const EdgeInsets.only(top: 44),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -212,7 +242,7 @@ class _CounterItemWidget extends State<CounterItemWidget> {
                       GestureDetector(
                           onTap: _onClickReset,
                           child: Padding(
-                            padding: EdgeInsets.only(left: 20),
+                            padding: const EdgeInsets.only(left: 20),
                             child: SvgPicture.asset(
                               width: 40,
                               height: 40,
@@ -240,10 +270,10 @@ class _CounterItemWidget extends State<CounterItemWidget> {
                       GestureDetector(
                         onTap: () {},
                         child: Padding(
-                          padding: EdgeInsets.only(left: 26),
+                          padding: const EdgeInsets.only(left: 26),
                           child: Text(
                             widget.counterItem.targetCount.toString(),
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Color(0xffA889C8),
                                 fontSize: 36,
                                 fontWeight: FontWeight.w500),

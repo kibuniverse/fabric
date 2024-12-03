@@ -1,4 +1,5 @@
-/** 时间相关的函数 */
+/// 时间相关的函数
+library;
 
 List<int> convertSecondsToHms(int v) {
   int hour = v ~/ 3600; // 计算小时数
