@@ -10,3 +10,9 @@ genDefaultCounterItem(int number) {
       isDelete: false,
       operateHistory: []);
 }
+
+/// 最大计数器数量
+const maxCounterNumber = 999;
+
+/// 最小计数器数量
+const minCounterNumber = 0;

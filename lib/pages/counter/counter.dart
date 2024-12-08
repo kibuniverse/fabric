@@ -1,8 +1,10 @@
+import "package:fabric/constants/constants.dart";
 import "package:fabric/model/counter.dart";
 import "package:fabric/utils/snack_bar.dart";
 import "package:fabric/utils/storage/counter.dart";
 import "package:fabric/utils/storage/counter_item.dart";
 import "package:fabric/widgets/counter_item.dart";
+import "package:fabric/widgets/operate_history.dart";
 import 'package:flutter/material.dart';
 import "package:flutter_svg/flutter_svg.dart";
 import "package:get_storage/get_storage.dart";
@@ -71,7 +73,7 @@ class _CounterState extends State<Counter> {
     });
   }
 
-  void _handleKeepScreenTap(bool v, BuildContext context) async {
+  void _handleKeepScreenTap(bool v) async {
     // 创建SnackBar
     final snackText = v ? '屏幕长亮已开启' : "屏幕长亮已关闭";
     if (v) {
@@ -94,21 +96,52 @@ class _CounterState extends State<Counter> {
     Haptics.vibrate(type);
   }
 
+  /// 处理点击计时器+事件
+  void _addCounterItem(String key) {
+    if (enableVibration) {
+      _performVibration(HapticsType.soft);
+    }
+    CounterItemStorage().addCounterItemModel(key);
+  }
+
+  /// 处理点击计数器-事件
+  void _minusCounterItem(String key) {
+    final counterItem = CounterItemStorage().loadCounterItemModel(key);
+    if (counterItem.currentCount == minCounterNumber) {
+      GlobalSnackBar.show(context: context, message: "计数器已到最小值");
+      return;
+    }
+    if (enableVibration) {
+      _performVibration(HapticsType.soft);
+    }
+    CounterItemStorage().minusCounterItemModel(key);
+  }
+
+  /// 处理重置
+  void _resetCounterItem(String key) {
+    CounterItemStorage().resetCounterItemModel(key);
+  }
+
+  void _handleAddHistory(String key, Operation type) {
+    final operateItem = {
+      'type': type.toString(),
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+    };
+    CounterItemStorage().addOperateItem(key, operateItem);
+  }
+
+  /// 计数器点击行为，统一处理中心
+  /// [Operation] 为操作类型，包括增加，减少，重置
   void _counterItemClick(String key, Operation type) {
+    _handleAddHistory(key, type);
     if (type == Operation.add) {
-      if (enableVibration) {
-        _performVibration(HapticsType.soft);
-      }
-      CounterItemStorage().addCounterItemModel(key);
+      _addCounterItem(key);
     }
     if (type == Operation.minus) {
-      if (enableVibration) {
-        _performVibration(HapticsType.soft);
-      }
-      CounterItemStorage().minusCounterItemModel(key);
+      _minusCounterItem(key);
     }
     if (type == Operation.reset) {
-      CounterItemStorage().resetCounterItemModel(key);
+      _resetCounterItem(key);
     }
     final newCounterItems = counterItems.map((counterItem) {
       if (counterItem.key == key) {
@@ -116,6 +149,7 @@ class _CounterState extends State<Counter> {
       }
       return counterItem;
     }).toList();
+    print(newCounterItems);
     setState(() {
       counterItems = newCounterItems;
     });
@@ -155,7 +189,7 @@ class _CounterState extends State<Counter> {
                     )),
                 GestureDetector(
                   onTap: () {
-                    _handleKeepScreenTap(!enableKeepScreen, context);
+                    _handleKeepScreenTap(!enableKeepScreen);
                   },
                   child: SvgPicture.asset(
                     "assets/images/svg/keep_screen_${enableKeepScreen ? "on" : "off"}.svg",
@@ -189,15 +223,18 @@ class _CounterState extends State<Counter> {
             ),
             Expanded(
               child: TabBarView(
-                children: counterItems
-                    .map((counterItem) => CounterItemWidget(
-                          counterItem: counterItem,
-                          counterKey: counterItem.key,
-                          onTap: (Operation type) {
-                            _counterItemClick(counterItem.key, type);
-                          },
-                        ))
-                    .toList(),
+                children: counterItems.map((counterItem) {
+                  return Column(children: [
+                    CounterItemWidget(
+                      counterItem: counterItem,
+                      counterKey: counterItem.key,
+                      onTap: (Operation type) {
+                        _counterItemClick(counterItem.key, type);
+                      },
+                    ),
+                    OperateHistory(operateHistory: counterItem.operateHistory),
+                  ]);
+                }).toList(),
               ),
             )
           ]),

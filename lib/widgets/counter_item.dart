@@ -139,25 +139,8 @@ class _CounterItemWidget extends State<CounterItemWidget> {
               ],
             ),
           ),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                  top: 17,
-                  bottom: 22,
-                ),
-                child: Text(
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black45,
-                        fontWeight: FontWeight.bold),
-                    "已织了..."),
-              )
-            ],
-          ),
           Padding(
-            padding: const EdgeInsets.only(left: 8, right: 8),
+            padding: const EdgeInsets.only(left: 8, right: 8, top: 22),
             child: Row(
               children: [
                 GestureDetector(

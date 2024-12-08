@@ -51,4 +51,11 @@ class CounterItemStorage {
     counterItem.timing = timing;
     _box.write(key, jsonEncode(counterItem.toJson()));
   }
+
+  /// 添加操作历史
+  void addOperateItem(String key, Map<String, dynamic> operateItem) {
+    final counterItem = loadCounterItemModel(key);
+    counterItem.operateHistory.add(operateItem);
+    _box.write(key, jsonEncode(counterItem.toJson()));
+  }
 }
