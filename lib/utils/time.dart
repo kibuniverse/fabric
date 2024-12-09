@@ -21,3 +21,19 @@ List<String> convertSecondsToHmsString(int v) {
 
   return [hour, minute, second];
 }
+
+/// 将时间戳转换为时间字符串, 字符串格式为 YYYY-MM-DD HH:MM:SS
+String convertTimestampToTimeString(int timestamp) {
+  DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+  // 使用toString方法和substring方法来格式化日期和时间
+  String year = dateTime.year.toString();
+  String month = dateTime.month.toString().padLeft(2, '0');
+  String day = dateTime.day.toString().padLeft(2, '0');
+  String hour = dateTime.hour.toString().padLeft(2, '0');
+  String minute = dateTime.minute.toString().padLeft(2, '0');
+  String second = dateTime.second.toString().padLeft(2, '0');
+
+  // 组合成最终的字符串格式
+  return '$year-$month-$day $hour:$minute:$second';
+}

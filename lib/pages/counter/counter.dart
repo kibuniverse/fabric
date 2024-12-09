@@ -122,10 +122,12 @@ class _CounterState extends State<Counter> {
     CounterItemStorage().resetCounterItemModel(key);
   }
 
-  void _handleAddHistory(String key, Operation type) {
+  void _handleAddHistory(
+      String key, Operation type, CounterItem newCounterItem) {
     final operateItem = {
       'type': type.toString(),
       'timestamp': DateTime.now().millisecondsSinceEpoch,
+      'counter_number': newCounterItem.currentCount,
     };
     CounterItemStorage().addOperateItem(key, operateItem);
   }
@@ -133,7 +135,6 @@ class _CounterState extends State<Counter> {
   /// 计数器点击行为，统一处理中心
   /// [Operation] 为操作类型，包括增加，减少，重置
   void _counterItemClick(String key, Operation type) {
-    _handleAddHistory(key, type);
     if (type == Operation.add) {
       _addCounterItem(key);
     }
@@ -143,13 +144,16 @@ class _CounterState extends State<Counter> {
     if (type == Operation.reset) {
       _resetCounterItem(key);
     }
+
+    _handleAddHistory(
+        key, type, CounterItemStorage().loadCounterItemModel(key));
+
     final newCounterItems = counterItems.map((counterItem) {
       if (counterItem.key == key) {
         return CounterItemStorage().loadCounterItemModel(key);
       }
       return counterItem;
     }).toList();
-    print(newCounterItems);
     setState(() {
       counterItems = newCounterItems;
     });

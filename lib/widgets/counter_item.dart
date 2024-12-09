@@ -105,8 +105,6 @@ class _CounterItemWidget extends State<CounterItemWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "CounterItemWidget build ${jsonEncode(widget.counterItem)} $widget.counterKey");
     return Padding(
       padding: const EdgeInsets.all(22.0),
       child: Column(
@@ -238,11 +236,7 @@ class _CounterItemWidget extends State<CounterItemWidget> {
                   Row(
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isRecordingTime = !isRecordingTime;
-                          });
-                        },
+                        onTap: () {},
                         child: SvgPicture.asset(
                           width: 40,
                           height: 40,
