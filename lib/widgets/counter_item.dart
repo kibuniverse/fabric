@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:animated_digit/animated_digit.dart';
 import 'package:fabric/model/counter.dart';
