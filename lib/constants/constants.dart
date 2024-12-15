@@ -16,3 +16,10 @@ const maxCounterNumber = 999;
 
 /// 最小计数器数量
 const minCounterNumber = 0;
+
+/// 需要被记录的操作类型
+const needToBeRecordOperateType = [
+  Operation.add,
+  Operation.minus,
+  Operation.reset
+];

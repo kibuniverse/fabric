@@ -20,10 +20,11 @@ class CounterItemStorage {
   }
 
   /// 计数器加一
-  void addCounterItemModel(String key) {
+  CounterItem addCounterItemModel(String key) {
     final counterItem = loadCounterItemModel(key);
     counterItem.currentCount++;
     _box.write(key, jsonEncode(counterItem.toJson()));
+    return counterItem;
   }
 
   /// 计数器减一
@@ -49,6 +50,13 @@ class CounterItemStorage {
   void updateTimeStamp(String key, int timing) {
     final counterItem = loadCounterItemModel(key);
     counterItem.timing = timing;
+    _box.write(key, jsonEncode(counterItem.toJson()));
+  }
+
+  /// 更新目标数
+  void updateTargetCount(String key, int targetCount) {
+    final counterItem = loadCounterItemModel(key);
+    counterItem.targetCount = targetCount;
     _box.write(key, jsonEncode(counterItem.toJson()));
   }
 

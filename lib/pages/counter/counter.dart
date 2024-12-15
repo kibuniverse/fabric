@@ -1,3 +1,4 @@
+import "package:easy_debounce_throttle/easy_debounce_throttle.dart";
 import "package:fabric/constants/constants.dart";
 import "package:fabric/model/counter.dart";
 import "package:fabric/utils/snack_bar.dart";
@@ -50,6 +51,10 @@ class _CounterState extends State<Counter> {
     enableVibration = counterStorage.enableVibration;
     enableKeepScreen = counterStorage.enableKeepScreenOn;
     final counterKeys = counterStorage.counterKeys;
+    // 特殊逻辑，app 冷启 时 WakeLockPlus 需要手动启用
+    if (enableKeepScreen) {
+      WakelockPlus.enable();
+    }
 
     counterItems = counterKeys.map((key) {
       return CounterItemStorage().loadCounterItemModel(key);
@@ -101,7 +106,10 @@ class _CounterState extends State<Counter> {
     if (enableVibration) {
       _performVibration(HapticsType.soft);
     }
-    CounterItemStorage().addCounterItemModel(key);
+    final newCounterItem = CounterItemStorage().addCounterItemModel(key);
+    if (newCounterItem.targetCount == newCounterItem.currentCount) {
+      
+    }
   }
 
   /// 处理点击计数器-事件
@@ -132,9 +140,13 @@ class _CounterState extends State<Counter> {
     CounterItemStorage().addOperateItem(key, operateItem);
   }
 
+  void _updateTargetCount(String key, int count) {
+    CounterItemStorage().updateTargetCount(key, count);
+  }
+
   /// 计数器点击行为，统一处理中心
   /// [Operation] 为操作类型，包括增加，减少，重置
-  void _counterItemClick(String key, Operation type) {
+  void _counterItemClick(String key, Operation type, [int target = 0]) {
     if (type == Operation.add) {
       _addCounterItem(key);
     }
@@ -145,8 +157,14 @@ class _CounterState extends State<Counter> {
       _resetCounterItem(key);
     }
 
-    _handleAddHistory(
-        key, type, CounterItemStorage().loadCounterItemModel(key));
+    if (type == Operation.updateTarget) {
+      _updateTargetCount(key, target);
+    }
+
+    if (needToBeRecordOperateType.contains(type)) {
+      _handleAddHistory(
+          key, type, CounterItemStorage().loadCounterItemModel(key));
+    }
 
     final newCounterItems = counterItems.map((counterItem) {
       if (counterItem.key == key) {
@@ -211,7 +229,6 @@ class _CounterState extends State<Counter> {
             TabBar(
               tabAlignment: TabAlignment.start,
               isScrollable: true,
-              // labelColor 为 #A889C8
               labelColor: const Color(0xFFA889C8),
               unselectedLabelColor: const Color(0xCC333333),
               indicatorColor: const Color(0xFFA889C8),
@@ -232,8 +249,8 @@ class _CounterState extends State<Counter> {
                     CounterItemWidget(
                       counterItem: counterItem,
                       counterKey: counterItem.key,
-                      onTap: (Operation type) {
-                        _counterItemClick(counterItem.key, type);
+                      onTap: (Operation type, [int target = 0]) {
+                        _counterItemClick(counterItem.key, type, target);
                       },
                     ),
                     OperateHistory(operateHistory: counterItem.operateHistory),

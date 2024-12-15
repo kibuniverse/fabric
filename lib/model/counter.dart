@@ -99,6 +99,7 @@ enum Operation {
   minus,
   reset,
   delete,
+  updateTarget,
   beginRecordTime,
   endRecordTime,
 }
