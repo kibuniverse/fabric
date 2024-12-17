@@ -189,7 +189,7 @@ class _CounterItemWidget extends State<CounterItemWidget> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 8, right: 8, top: 22),
+              padding: const EdgeInsets.only(left: 8, right: 8, top: 60),
               child: Row(
                 children: [
                   GestureDetector(
@@ -252,7 +252,7 @@ class _CounterItemWidget extends State<CounterItemWidget> {
                   initCounter: widget.counterItem.timing),
             ),
             Padding(
-                padding: const EdgeInsets.only(top: 44),
+                padding: const EdgeInsets.only(top: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -286,6 +286,14 @@ class _CounterItemWidget extends State<CounterItemWidget> {
                     ),
                     Row(
                       children: [
+                        Padding(
+                          padding: EdgeInsets.only(right: 4),
+                          child: SvgPicture.asset(
+                            'assets/images/svg/target.svg',
+                            width: 24,
+                            height: 24,
+                          ),
+                        ),
                         const Text(
                           '设置目标：',
                           style: TextStyle(

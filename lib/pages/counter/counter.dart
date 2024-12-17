@@ -108,7 +108,30 @@ class _CounterState extends State<Counter> {
     }
     final newCounterItem = CounterItemStorage().addCounterItemModel(key);
     if (newCounterItem.targetCount == newCounterItem.currentCount) {
-      
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('🎉织完啦！'),
+            content: const Text('当前设置的目标数已经织完啦！！'),
+            actions: [
+              FilledButton(
+                style: ButtonStyle(
+                  // #A889C8
+                  backgroundColor: WidgetStateProperty.all<Color>(
+                    const Color(0xFFA889C8),
+                  ),
+                ),
+                child: const Text('我知道了'),
+                onPressed: () {
+                  // 执行确认操作
+                  Navigator.of(context).pop(true); // 关闭弹窗并返回true
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
