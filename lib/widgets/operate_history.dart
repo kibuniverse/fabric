@@ -8,6 +8,8 @@ class OperateHistory extends StatelessWidget {
   const OperateHistory({super.key, required this.operateHistory});
   @override
   Widget build(BuildContext context) {
+    double bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Expanded(
         child: Column(
       children: [
@@ -42,7 +44,7 @@ class OperateHistory extends StatelessWidget {
                     )))
             : Expanded(
                 child: Padding(
-                padding: const EdgeInsets.only(top: 18),
+                padding: EdgeInsets.only(top: 18, bottom: bottomPadding + 30),
                 // if the operateHistory is empty, render the history_empty.svg
                 child: SingleChildScrollView(
                   child: Column(

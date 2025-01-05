@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:animated_digit/animated_digit.dart';
 import 'package:easy_debounce_throttle/throttle/easy_throttle_builder.dart';
 import 'package:fabric/model/counter.dart';
@@ -174,16 +172,50 @@ class _CounterItemWidget extends State<CounterItemWidget> {
                         fontWeight: FontWeight.w400,
                         fontSize: 16),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      _showConfirmDialog(context);
-                    },
-                    child: SvgPicture.asset(
-                      width: 21,
-                      height: 21,
-                      "assets/images/svg/delete.svg",
-                      semanticsLabel: "删除",
-                    ),
+                  Row(
+                    children: [
+                      const Text(
+                        '目标行数：',
+                        style: TextStyle(
+                            color: Color(0xff333333),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      GestureDetector(
+                        onTap: () {},
+                        onDoubleTap: () {
+                          setState(() {
+                            isEditTargetNumber = !isEditTargetNumber;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 10),
+                          height: 22,
+                          child: !isEditTargetNumber
+                              ? IntrinsicWidth(
+                                  stepWidth: 1,
+                                  child: TextField(
+                                      cursorHeight: 22,
+                                      decoration: const InputDecoration(
+                                          border: InputBorder.none),
+                                      style: const TextStyle(
+                                        color: Color(0xffA889C8),
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      controller: _textController,
+                                      keyboardType: TextInputType.number,
+                                      onChanged: onInput))
+                              : Text(
+                                  widget.counterItem.targetCount.toString(),
+                                  style: const TextStyle(
+                                      color: Color(0xffA889C8),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                        ),
+                      )
+                    ],
                   )
                 ],
               ),
@@ -246,16 +278,40 @@ class _CounterItemWidget extends State<CounterItemWidget> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 22),
+              padding: const EdgeInsets.only(top: 12),
               child: TimerWidget(
                   isActive: isRecordingTime,
                   initCounter: widget.counterItem.timing),
             ),
             Padding(
-                padding: const EdgeInsets.only(top: 16),
+                padding: const EdgeInsets.only(top: 26),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Row(
+                      children: [
+                        Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: GestureDetector(
+                              onTap: () {
+                                _showConfirmDialog(context);
+                              },
+                              child: SvgPicture.asset(
+                                width: 21,
+                                height: 21,
+                                "assets/images/svg/delete.svg",
+                                semanticsLabel: "删除",
+                              ),
+                            )),
+                        const Text(
+                          "删除计数器",
+                          style: TextStyle(
+                            // color #B22222E5
+                            color: const Color(0xE5B22222),
+                          ),
+                        ),
+                      ],
+                    ),
                     Row(
                       children: [
                         GestureDetector(
@@ -284,58 +340,6 @@ class _CounterItemWidget extends State<CounterItemWidget> {
                             )),
                       ],
                     ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(right: 4),
-                          child: SvgPicture.asset(
-                            'assets/images/svg/target.svg',
-                            width: 24,
-                            height: 24,
-                          ),
-                        ),
-                        const Text(
-                          '设置目标：',
-                          style: TextStyle(
-                              color: Color(0xff333333),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        GestureDetector(
-                          onTap: () {},
-                          onDoubleTap: () {
-                            setState(() {
-                              isEditTargetNumber = !isEditTargetNumber;
-                            });
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: !isEditTargetNumber
-                                ? IntrinsicWidth(
-                                    stepWidth: 1,
-                                    child: TextField(
-                                        cursorHeight: 30,
-                                        decoration: const InputDecoration(
-                                            border: InputBorder.none),
-                                        style: const TextStyle(
-                                          color: Color(0xffA889C8),
-                                          fontSize: 36,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        controller: _textController,
-                                        keyboardType: TextInputType.number,
-                                        onChanged: onInput))
-                                : Text(
-                                    widget.counterItem.targetCount.toString(),
-                                    style: const TextStyle(
-                                        color: Color(0xffA889C8),
-                                        fontSize: 36,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                          ),
-                        )
-                      ],
-                    )
                   ],
                 ))
           ],

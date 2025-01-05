@@ -1,9 +1,9 @@
-import "package:easy_debounce_throttle/easy_debounce_throttle.dart";
 import "package:fabric/constants/constants.dart";
 import "package:fabric/model/counter.dart";
 import "package:fabric/utils/snack_bar.dart";
 import "package:fabric/utils/storage/counter.dart";
 import "package:fabric/utils/storage/counter_item.dart";
+import "package:fabric/widgets/custom_underline_tab_indicator.dart";
 import "package:fabric/widgets/counter_item.dart";
 import "package:fabric/widgets/operate_history.dart";
 import 'package:flutter/material.dart';
@@ -112,7 +112,7 @@ class _CounterState extends State<Counter> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('🎉织完啦！'),
+            title: const Text('🎉 织完啦！'),
             content: const Text('当前设置的目标数已经织完啦！！'),
             actions: [
               FilledButton(
@@ -254,8 +254,15 @@ class _CounterState extends State<Counter> {
               isScrollable: true,
               labelColor: const Color(0xFFA889C8),
               unselectedLabelColor: const Color(0xCC333333),
+              indicator: UnderlineTabIndicator(
+                borderSide: const BorderSide(
+                  width: 3.0,
+                  color: Color(0xFFA889C8),
+                ), // 指示器高度
+                insets: const EdgeInsets.symmetric(horizontal: 16.0), // 调整指示器宽度
+                borderRadius: BorderRadius.circular(3.0), // 圆角
+              ),
               indicatorColor: const Color(0xFFA889C8),
-              indicatorPadding: const EdgeInsets.only(left: 10.0, right: 10),
               tabs: counterItems
                   .map((counterItem) => Tab(
                         child: Text(
