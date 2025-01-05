@@ -5,6 +5,7 @@ import "package:fabric/utils/storage/counter.dart";
 import "package:fabric/utils/storage/counter_item.dart";
 import "package:fabric/widgets/custom_underline_tab_indicator.dart";
 import "package:fabric/widgets/counter_item.dart";
+import "package:fabric/widgets/line_painter.dart";
 import "package:fabric/widgets/operate_history.dart";
 import 'package:flutter/material.dart';
 import "package:flutter_svg/flutter_svg.dart";
@@ -272,6 +273,12 @@ class _CounterState extends State<Counter> {
                       ))
                   .toList(),
             ),
+            Padding(
+                padding: const EdgeInsets.only(top: 1),
+                child: Container(
+                  height: 1,
+                  color: const Color(0xFFE5E5E5),
+                )),
             Expanded(
               child: TabBarView(
                 children: counterItems.map((counterItem) {

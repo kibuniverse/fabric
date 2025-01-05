@@ -13,7 +13,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        theme: ThemeData(scaffoldBackgroundColor: Colors.white),
+        theme: ThemeData(
+            scaffoldBackgroundColor: Colors.white,
+            tabBarTheme: const TabBarTheme(dividerColor: Colors.transparent)),
         home: const Scaffold(body: Counter()));
   }
 }
